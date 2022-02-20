@@ -1,7 +1,9 @@
+from turtle import width
 import mysql.connector
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from functools import partial
 
 def new_customer(fname, lname, mobile):
     try:
@@ -78,61 +80,86 @@ def new_customer_pop():
     
 
 
+def home_page():
+    window = Tk()
+    window.title("Home Page")
+    window.geometry("500x280")
 
-window = Tk()
-window.title("Home Page")
-window.geometry("500x280")
+    window.columnconfigure([0,1,2], weight=1, minsize=75)
+    window.rowconfigure([0,1,2], weight=1, minsize=50)
 
-window.columnconfigure([0,1,2], weight=1, minsize=75)
-window.rowconfigure([0,1,2], weight=1, minsize=50)
+    cust_label_frame = LabelFrame(window, text="Customer Centre")
 
-cust_label_frame = LabelFrame(window, text="Customer Centre")
+    cust_tab = ttk.Notebook(cust_label_frame)
 
-cust_tab = ttk.Notebook(cust_label_frame)
+    cust_tab_1 = Frame(cust_tab)
+    cust_tab_2 = Frame(cust_tab)
 
-cust_tab_1 = Frame(cust_tab)
-cust_tab_2 = Frame(cust_tab)
+    product_tab = ttk.Notebook(cust_tab_1)
 
-# product_tab_1 = Frame(product_tab)
-# product_tab_2 = Frame(product_tab)
+    cust_tab.add(cust_tab_1, text="Contact")
+    cust_tab.add(cust_tab_2, text="Details")
 
-product_tab = ttk.Notebook(cust_tab_1)
+    label3 = Label(cust_tab_1, text="label 3")
+    label4 = Label(cust_tab_2, text="label 4")
 
-cust_tab.add(cust_tab_1, text="Contact")
-cust_tab.add(cust_tab_2, text="Details")
+    details_tab = ttk.Notebook(cust_tab_1)
 
-# product_tab.add(product_tab_1, text="Info")
-# product_tab.add(product_tab_2, text="Details")
+    details_tab_1 = Frame(details_tab)
+    details_tab_2 = Frame(details_tab)
 
-# label1 = Label(product_tab_1, text="label 1")
-# label2 = Label(product_tab_2, text="label 2")
-label3 = Label(cust_tab_1, text="label 3")
-label4 = Label(cust_tab_2, text="label 4")
+    details_tab.add(details_tab_1, text="Details")
+    details_tab.add(details_tab_2, text="Contacts")
 
-details_tab = ttk.Notebook(cust_tab_1)
+    cust_label_frame.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
 
-details_tab_1 = Frame(details_tab)
-details_tab_2 = Frame(details_tab)
+    label3.grid(row=0, column=0)
+    label4.grid(row=0, column=0)
 
-details_tab.add(details_tab_1, text="Details")
-details_tab.add(details_tab_2, text="Contacts")
+    product_tab.grid(row=0, column=0, sticky="NSEW")
+    details_tab.grid(row=0, column=0, sticky="NSEW")
 
-cust_label_frame.grid(row=0, column=0, columnspan=2, sticky="NSEW")
-
-# label1.grid(row=0, column=0)
-# label2.grid(row=0, column=0)
-label3.grid(row=0, column=0)
-label4.grid(row=0, column=0)
-
-product_tab.grid(row=0, column=0, sticky="NSEW")
-details_tab.grid(row=0, column=0, sticky="NSEW")
-
-cust_tab.grid(row=0, column=1, sticky="NSEW")
+    cust_tab.grid(row=0, column=1, sticky="NSEW")
 
 
-new_cust_but = Button(window, text="Create New Customer", command=new_customer_pop)
+    new_cust_but = Button(window, text="Create New Customer", command=new_customer_pop)
 
-new_cust_but.grid(row=1, column=0, columnspan=2, sticky="NSEW", padx=10, pady=10)
+    new_cust_but.grid(row=1, column=0, columnspan=2, sticky="NSEW", padx=10, pady=10)
 
 
-window.mainloop()
+    window.mainloop()
+
+def login():
+
+    def validateLogin(username, password):
+
+        if username.get() == "chase" and password.get() == "1234":
+            tkWindow.destroy()
+            home_page()
+        else:
+            messagebox.showerror("Incorrect details", "The username or password is incorrect. Please try again.")
+            username.set("")
+            password.set("")
+
+    #window
+    tkWindow = Tk()
+    tkWindow.title('Login Form - Customer Database')
+
+    #username label and text entry box
+    usernameLabel = Label(tkWindow, text="User Name").grid(row=0, column=0, padx=5, pady=5)
+    username = StringVar()
+    usernameEntry = Entry(tkWindow, textvariable=username,).grid(row=0, column=1, padx=5, pady=5)  
+
+    #password label and password entry box
+    passwordLabel = Label(tkWindow,text="Password").grid(row=1, column=0, padx=5, pady=5)  
+    password = StringVar()
+    passwordEntry = Entry(tkWindow, textvariable=password, show='*').grid(row=1, column=1, padx=5, pady=5)  
+
+    validateLogin = partial(validateLogin, username, password)
+
+    #login button
+    loginButton = Button(tkWindow, text="Login", command=validateLogin).grid(row=4, column=0, columnspan=2, padx=5, pady=5)
+
+    tkWindow.mainloop()
+
+login()
