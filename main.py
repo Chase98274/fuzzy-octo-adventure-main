@@ -1,4 +1,3 @@
-from turtle import width
 import mysql.connector
 from tkinter import *
 from tkinter import ttk
@@ -78,6 +77,47 @@ def new_customer_pop():
 
     new_pop.mainloop()
     
+def query():
+
+    def search_submit():
+        mydb = mysql.connector.connect(
+        host="127.0.0.1",
+        user="root",
+        password="Hayman_Robyn577",
+        database="customers")
+
+        mycursor = mydb.cursor()
+
+        mycursor.execute("SELECT * FROM customers.info WHERE last_name = \"{}\";".format(search_var.get().strip().lower().capitalize()))
+
+        myresult = mycursor.fetchall()
+
+        i = 0
+
+        for x in myresult:
+            messagebox.showinfo("Contact added", x)
+        
+        
+        search_pop.destroy()
+        
+    
+    search_pop = Tk()
+
+    search_var = StringVar(search_pop)
+
+    search_entry = Entry(search_pop, textvariable=search_var)
+    search_entry.grid(row=0, column=0, padx=5, pady=5)
+
+    search_btn_query = Button(search_pop, text="Search", command=search_submit)
+    search_btn_query.grid(row=0, column=1)
+
+    
+
+    
+
+
+    
+
 
 
 def home_page():
@@ -88,14 +128,19 @@ def home_page():
     window.columnconfigure([0,1,2], weight=1, minsize=75)
     window.rowconfigure([0,1,2], weight=1, minsize=50)
 
+    
+
     cust_label_frame = LabelFrame(window, text="Customer Centre")
 
-    cust_tab = ttk.Notebook(cust_label_frame)
+    search_btn = Button(cust_label_frame, text="Search", command=query)
+    search_btn.grid(row=0, column=1)
 
+    cust_tab = ttk.Notebook(cust_label_frame)
+    
     cust_tab_1 = Frame(cust_tab)
     cust_tab_2 = Frame(cust_tab)
 
-    product_tab = ttk.Notebook(cust_tab_1)
+    product_tab = ttk.Notebook(cust_tab_1)    
 
     cust_tab.add(cust_tab_1, text="Contact")
     cust_tab.add(cust_tab_2, text="Details")
@@ -103,7 +148,7 @@ def home_page():
     label3 = Label(cust_tab_1, text="label 3")
     label4 = Label(cust_tab_2, text="label 4")
 
-    details_tab = ttk.Notebook(cust_tab_1)
+    details_tab = ttk.Notebook(window)    
 
     details_tab_1 = Frame(details_tab)
     details_tab_2 = Frame(details_tab)
@@ -116,15 +161,18 @@ def home_page():
     label3.grid(row=0, column=0)
     label4.grid(row=0, column=0)
 
-    product_tab.grid(row=0, column=0, sticky="NSEW")
-    details_tab.grid(row=0, column=0, sticky="NSEW")
+    product_tab.grid(row=2, column=0, sticky="NSEW")
+    details_tab.grid(row=1, column=0, sticky="NSEW", padx=5, pady=5)
 
-    cust_tab.grid(row=0, column=1, sticky="NSEW")
+    cust_tab.grid(row=0, column=0, sticky="NSEW")
 
 
-    new_cust_but = Button(window, text="Create New Customer", command=new_customer_pop)
+    #Details tab
+    display_fname = Label(details_tab_1, text="First name: ")
+    display_fname.grid(row=0, column=0, padx=5, pady=5)
 
-    new_cust_but.grid(row=1, column=0, columnspan=2, sticky="NSEW", padx=10, pady=10)
+    new_cust_but = Button(details_tab_1, text="Create New Customer", command=new_customer_pop)
+    new_cust_but.grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
 
     window.mainloop()
