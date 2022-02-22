@@ -128,10 +128,9 @@ def home_page():
     window.columnconfigure([0,1,2], weight=1, minsize=75)
     window.rowconfigure([0,1,2], weight=1, minsize=50)
 
-    cust_label_frame = LabelFrame(window, text="Customer Centre")
+    
 
-    display_fname = Label(cust_label_frame, text="First name: ")
-    display_fname.grid(row=1, column=0, padx=5, pady=5)
+    cust_label_frame = LabelFrame(window, text="Customer Centre")
 
     search_btn = Button(cust_label_frame, text="Search", command=query)
     search_btn.grid(row=0, column=1)
@@ -149,7 +148,7 @@ def home_page():
     label3 = Label(cust_tab_1, text="label 3")
     label4 = Label(cust_tab_2, text="label 4")
 
-    details_tab = ttk.Notebook(cust_tab_1)
+    details_tab = ttk.Notebook(window)    
 
     details_tab_1 = Frame(details_tab)
     details_tab_2 = Frame(details_tab)
@@ -168,8 +167,12 @@ def home_page():
     cust_tab.grid(row=0, column=0, sticky="NSEW")
 
 
-    new_cust_but = Button(cust_label_frame, text="Create New Customer", command=new_customer_pop)
-    new_cust_but.grid(row=1, column=0, columnspan=2, sticky="NSEW", padx=10, pady=10)
+    #Details tab
+    display_fname = Label(details_tab_1, text="First name: ")
+    display_fname.grid(row=0, column=0, padx=5, pady=5)
+
+    new_cust_but = Button(details_tab_1, text="Create New Customer", command=new_customer_pop)
+    new_cust_but.grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
 
     window.mainloop()
