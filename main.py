@@ -128,51 +128,70 @@ def home_page():
     window.columnconfigure([0,1,2], weight=1, minsize=75)
     window.rowconfigure([0,1,2], weight=1, minsize=50)
 
+    #Creating main Notebook
+    details_tab = ttk.Notebook(window)
     
+    details_tab_1 = Frame(details_tab)
+    details_tab_2 = Frame(details_tab)
 
-    cust_label_frame = LabelFrame(window, text="Customer Centre")
+    #detail tabs 1 & 2 are added to the main Notebook
+    details_tab.add(details_tab_1, text="Customers")
+    details_tab.add(details_tab_2, text="Contacts")   
 
-    search_btn = Button(cust_label_frame, text="Search", command=query)
-    search_btn.grid(row=0, column=1)
+    #Label frame called "Customer Centre" created
+    cust_label_frame = LabelFrame(details_tab_1, text="Customer Centre")
+    cust_label_frame.grid(row=5, column=0, padx=5, pady=5, sticky="NSEW")
 
+    #New customer button
+    new_cust_but = Button(details_tab_1, text="Create New Customer", command=new_customer_pop)
+    new_cust_but.grid(row=0, column=0, sticky="NSEW", padx=10, pady=10)
+
+    #Customer first name label
+    display_fname = Label(details_tab_1, text="First name: ")
+    display_fname.grid(row=1, column=0, padx=5, pady=5)
+
+    #Label for last name
+    display_lname = Label(details_tab_1, text="Last name: ")
+    display_lname.grid(row=2, column=0, padx=5, pady=5)
+
+    #Label for mobile number
+    display_mobile =Label(details_tab_1, text="Mobile: ")
+    display_mobile.grid(row=3, column=0, padx=5, pady=5)
+
+    #Label for email
+    display_email =Label(details_tab_1, text="Email: ")
+    display_email.grid(row=4, column=0, padx=5, pady=5)
+
+    #Creating sub Notebook
     cust_tab = ttk.Notebook(cust_label_frame)
-    
+
     cust_tab_1 = Frame(cust_tab)
     cust_tab_2 = Frame(cust_tab)
 
-    product_tab = ttk.Notebook(cust_tab_1)    
-
     cust_tab.add(cust_tab_1, text="Contact")
-    cust_tab.add(cust_tab_2, text="Details")
+    cust_tab.add(cust_tab_2, text="Label5")
+
+    search_btn = Button(cust_label_frame, text="Search", command=query)
+    search_btn.grid(row=0, column=1)   
 
     label3 = Label(cust_tab_1, text="label 3")
     label4 = Label(cust_tab_2, text="label 4")
 
-    details_tab = ttk.Notebook(window)    
+    
 
-    details_tab_1 = Frame(details_tab)
-    details_tab_2 = Frame(details_tab)
-
-    details_tab.add(details_tab_1, text="Details")
-    details_tab.add(details_tab_2, text="Contacts")
-
-    cust_label_frame.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
+    
 
     label3.grid(row=0, column=0)
     label4.grid(row=0, column=0)
 
-    product_tab.grid(row=2, column=0, sticky="NSEW")
     details_tab.grid(row=1, column=0, sticky="NSEW", padx=5, pady=5)
 
     cust_tab.grid(row=0, column=0, sticky="NSEW")
 
 
-    #Details tab
-    display_fname = Label(details_tab_1, text="First name: ")
-    display_fname.grid(row=0, column=0, padx=5, pady=5)
+    
 
-    new_cust_but = Button(details_tab_1, text="Create New Customer", command=new_customer_pop)
-    new_cust_but.grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+    
 
 
     window.mainloop()
