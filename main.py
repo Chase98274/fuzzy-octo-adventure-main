@@ -1,3 +1,4 @@
+from unittest.main import main
 import mysql.connector
 from tkinter import *
 from tkinter import ttk
@@ -86,8 +87,6 @@ def new_customer_pop():
     
 def query():
 
-    
-
     def search_submit():
         mydb = mysql.connector.connect(
         host="127.0.0.1",
@@ -124,17 +123,9 @@ def query():
                 messagebox.showinfo("Results", x)
 
         else:
-            print("Sorry that was a bad option!")
-            print(mode.get())
-
-
-    
-
+            messagebox.showinfo("Oh no!", "Sorry that was a bad option!")
         
         search_pop.destroy()
-    def sel():
-        selection = "You selected the option " + str(mode.get())
-        print(selection)
     
     search_pop = Tk()
     search_pop.title("Search")
@@ -156,7 +147,7 @@ def query():
     i = 1
     for (text, value) in values.items():
         Radiobutton(search_par, text = text, variable = mode,
-            value = value, command=sel).grid(row=i, column=0, pady = 5)
+            value = value).grid(row=i, column=0, pady = 5)
         i += 1
 
     
@@ -180,33 +171,57 @@ def home_page():
     window.title("Home Page")
     window.geometry("500x500")
 
-    window.columnconfigure([0,1,2], weight=1, minsize=75)
-    window.rowconfigure([0,1,2], weight=1, minsize=50)
+    window.columnconfigure(0, weight=1, minsize=75)
+    window.rowconfigure(1, weight=1, minsize=50)
+
+    toolbar_frame = Frame(window)
+    toolbar_frame.grid(row=0, column=0, padx=0, pady=0)
+
+    bold_btn = Button(toolbar_frame, text = "Bold")
+    bold_btn.grid(row=0, column=0, sticky="W", padx=0, pady=0)
+
+	# Creating and displaying of italic button
+    italic_btn = Button(toolbar_frame, text = "Italic")
+    italic_btn.grid(row=0, column=1, sticky="W", padx=0, pady=0)
 
     
+
+    #Frame of all widgets on home page
+    main_frame = Frame(window)
+    main_frame.grid(row=1, column=0, columnspan=3, sticky="NSEW")
+
+    main_frame.columnconfigure(0, weight=1, minsize=50)
+    main_frame.rowconfigure(1, weight=1, minsize=50)
 
     #Creating main Notebook
-    details_tab = ttk.Notebook(window)
+    home_notebook = ttk.Notebook(main_frame)
+    home_notebook.grid(row=1, column=0, sticky="NSEW")
     
-    details_tab_1 = Frame(details_tab)
-    details_tab_2 = Frame(details_tab)
+    #Creating tabs for Notebook
+    tab_1 = Frame(home_notebook, bg="green")
+    tab_2 = Frame(home_notebook, bg="yellow")
+    tab_3 = Frame(home_notebook, bg="blue")
+    tab_4 = Frame(home_notebook, bg="indigo")
+    tab_5 = Frame(home_notebook, bg="violet")
+    tab_6 = Frame(home_notebook, bg="grey")
 
     #detail tabs 1 & 2 are added to the main Notebook
-    details_tab.add(details_tab_1, text="Customers")
-    details_tab.add(details_tab_2, text="Contacts")   
+    home_notebook.add(tab_1, text="Customers")
+    home_notebook.add(tab_2, text="Contacts")
+    home_notebook.add(tab_3, text="3")    
+    home_notebook.add(tab_4, text="4")
+    home_notebook.add(tab_5, text="5")
+    home_notebook.add(tab_6, text="6")
 
-    #Label frame called "Customer Centre" created
-    cust_label_frame = LabelFrame(details_tab_1, text="Customer Centre")
-    cust_label_frame.grid(row=5, column=0, padx=5, pady=5, sticky="NSEW")
-
+    #On tab_1
     #New customer button
-    new_cust_but = Button(details_tab_1, text="Create New Customer", command=new_customer_pop)
+    new_cust_but = Button(tab_1, text="Create New Customer", command=new_customer_pop)
     new_cust_but.grid(row=0, column=0, sticky="NSEW", padx=10, pady=10)
 
-    search_btn = Button(details_tab_1, text="Search", command=query)
+    search_btn = Button(tab_1, text="Search", command=query)
     search_btn.grid(row=0, column=1)  
 
-    info_frame = Frame(details_tab_1)
+    info_frame = Frame(tab_1)
     info_frame.grid(row=1, column=0, padx=5, pady=5)
 
     #Customer first name label
@@ -225,7 +240,7 @@ def home_page():
     display_email =Label(info_frame, text="Email: ")
     display_email.grid(row=3, column=0, padx=5, pady=5)
 
-    details_tab.grid(row=1, column=0, sticky="NSEW", padx=5, pady=5)
+    
 
     window.mainloop()
 
@@ -244,22 +259,26 @@ def login():
 
     #window
     tkWindow = Tk()
-    tkWindow.title('Login Form - Customer Database')
+    tkWindow.geometry("250x120")
+    tkWindow.title('Login')
+
+    tkWindow.rowconfigure(0, weight=1, minsize=50)
+    tkWindow.columnconfigure(0, weight=1, minsize=50)
 
     #username label and text entry box
-    usernameLabel = Label(tkWindow, text="User Name").grid(row=0, column=0, padx=5, pady=5)
+    usernameLabel = Label(tkWindow, text="Username").grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
     username = StringVar()
     usernameEntry = Entry(tkWindow, textvariable=username,).grid(row=0, column=1, padx=5, pady=5)  
 
     #password label and password entry box
-    passwordLabel = Label(tkWindow,text="Password").grid(row=1, column=0, padx=5, pady=5)  
+    passwordLabel = Label(tkWindow,text="Password").grid(row=1, column=0, padx=5, pady=5, sticky="NSEW")  
     password = StringVar()
-    passwordEntry = Entry(tkWindow, textvariable=password, show='*').grid(row=1, column=1, padx=5, pady=5)  
+    passwordEntry = Entry(tkWindow, textvariable=password, show='*').grid(row=1, column=1, padx=5, pady=5, sticky="NSEW")  
 
     validateLogin = partial(validateLogin, username, password)
 
     #login button
-    loginButton = Button(tkWindow, text="Login", command=validateLogin).grid(row=4, column=0, columnspan=2, padx=5, pady=5)
+    loginButton = Button(tkWindow, text="Login", command=validateLogin).grid(row=4, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
 
     tkWindow.mainloop()
 
