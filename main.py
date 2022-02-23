@@ -97,52 +97,76 @@ def query():
 
         mycursor = mydb.cursor()
 
-        # if mode == "first_name":
-        #     mycursor.execute("SELECT * FROM customers.info WHERE last_name = \"{}\";".format(search_var.get().strip().lower().capitalize()))
+        if mode.get() == "1":
+            mycursor.execute("SELECT * FROM customers.info WHERE first_name = \"{}\";".format(search_var.get().strip().lower().capitalize()))
+            myresult = mycursor.fetchall()
+            for x in myresult:
+                messagebox.showinfo("Results", x)
 
-        #     myresult = mycursor.fetchall()
-        #     for x in myresult:
-        #         messagebox.showinfo("Contact added", x)
+        elif mode.get() == "2":
+            mycursor.execute("SELECT * FROM customers.info WHERE last_name = \"{}\";".format(search_var.get().strip().lower().capitalize()))
+            myresult = mycursor.fetchall()
+            for x in myresult:
+                messagebox.showinfo("Results", x)
 
-        # elif mode == "last_name":
-        #     pass
-        # elif mode == "mobile":
-        #     pass
-        # elif mode == "email":
-        #     pass
+        elif mode.get() == "3":
+            
+            mycursor.execute("SELECT * FROM customers.info WHERE mobile = \"{}\";".format(search_var.get().strip()))
+            myresult = mycursor.fetchall()
+            for x in myresult:
+                messagebox.showinfo("Results", x)
+
+        elif mode.get() == "4":
+            
+            mycursor.execute("SELECT * FROM customers.info WHERE email = \"{}\";".format(search_var.get().strip().lower()))
+            myresult = mycursor.fetchall()
+            for x in myresult:
+                messagebox.showinfo("Results", x)
+
+        else:
+            print("Sorry that was a bad option!")
+            print(mode.get())
 
 
     
 
         
         search_pop.destroy()
-        
+    def sel():
+        selection = "You selected the option " + str(mode.get())
+        print(selection)
     
     search_pop = Tk()
+    search_pop.title("Search")
+
+    search_frame = Frame(search_pop)
+    search_frame.grid(row=1, column=0, padx=5, pady=5)
+
+    search_par = LabelFrame(search_pop, text="Search by:")
+    search_par.grid(row=0, column=0, padx=5, pady=5)
 
     search_var = StringVar(search_pop)
-    fname = StringVar()
-    lname = StringVar()
-    mobile = StringVar()
-    email = StringVar()
+    mode = StringVar(search_pop, "1")
 
-    search_entry = Entry(search_pop, textvariable=search_var)
+    # Dictionary to create multiple buttons
+    values = {"First Name" : "1",
+              "Last Name" : "2",
+              "Mobile" : "3",
+              "Email" : "4"}
+    i = 1
+    for (text, value) in values.items():
+        Radiobutton(search_par, text = text, variable = mode,
+            value = value, command=sel).grid(row=i, column=0, pady = 5)
+        i += 1
+
+    
+    search_entry = Entry(search_frame, textvariable=search_var)
     search_entry.grid(row=0, column=0, padx=5, pady=5)
 
-    search_btn_query = Button(search_pop, text="Search", command=search_submit)
+    search_btn_query = Button(search_frame, text="Search", command=search_submit)
     search_btn_query.grid(row=0, column=1)
 
-    fname_t1 = Checkbutton(search_pop, text="First Name", variable=fname)
-    fname_t1.grid(row=1, column=0)
-
-    fname_t2 = Checkbutton(search_pop, text="First Name", variable=fname)
-    fname_t2.grid(row=1, column=0)
-
-    fname_t3 = Checkbutton(search_pop, text="First Name", variable=fname)
-    fname_t3.grid(row=1, column=0)
-
-    fname_t4 = Checkbutton(search_pop, text="First Name", variable=fname)
-    fname_t4.grid(row=1, column=0)
+    
 
     
 
