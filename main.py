@@ -5,6 +5,14 @@ from tkinter import ttk
 from tkinter import messagebox
 from functools import partial
 
+class Users():
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+    
+user_1 = Users("chase", "1234")
+
+
 def new_customer(fname, lname, mobile, email):
     """This function creates a connection to the database then runs a query to insert the new customer"""
     try:
@@ -249,7 +257,7 @@ def login():
 
     def validateLogin(username, password):
 
-        if username.get() == "chase" and password.get() == "1234":
+        if username.get() == user_1.username and password.get() == user_1.password:
             tkWindow.destroy()
             home_page()
         else:
