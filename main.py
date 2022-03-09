@@ -178,6 +178,7 @@ def home_page():
     window = Tk()
     window.title("Home Page")
     window.geometry("500x500")
+    
 
     window.columnconfigure(0, weight=1, minsize=75)
     window.rowconfigure(1, weight=1, minsize=50)
@@ -204,8 +205,11 @@ def home_page():
     #Creating main Notebook
     home_notebook = ttk.Notebook(main_frame)
     home_notebook.grid(row=1, column=0, sticky="NSEW")
+
     
-    #Creating tabs for Notebook
+    
+    
+    #Creating tabs for Notebooks
     tab_1 = Frame(home_notebook, bg="green")
     tab_2 = Frame(home_notebook, bg="yellow")
     tab_3 = Frame(home_notebook, bg="blue")
@@ -213,13 +217,33 @@ def home_page():
     tab_5 = Frame(home_notebook, bg="violet")
     tab_6 = Frame(home_notebook, bg="grey")
 
+    #Product tab notebook
+    product_notebook = ttk.Notebook(tab_3)
+    product_notebook.grid(row=0, column=0)
+
+    product_tab_1 = Frame(product_notebook, bg="#F3DE8A")
+
+    product_notebook.add(product_tab_1, text="Pricing")
+
+    #Products tab frames
+    product_frame_1 = Frame(product_tab_1)
+    product_frame_1.grid(row=0, column=0, padx=5, pady=5)
+
+    #Product tab info
+    product_model_label = Label(product_frame_1, text="Text Here")
+    product_model_label.grid(row=0, column=0, padx=5, pady=5)
+
+    product_model_entry = Entry(product_frame_1, background="red")
+    product_model_entry.grid(row=0, column=1, padx=5, pady=5)
+
     #detail tabs 1 & 2 are added to the main Notebook
     home_notebook.add(tab_1, text="Customers")
     home_notebook.add(tab_2, text="Contacts")
-    home_notebook.add(tab_3, text="3")    
+    home_notebook.add(tab_3, text="Products")    
     home_notebook.add(tab_4, text="4")
     home_notebook.add(tab_5, text="5")
     home_notebook.add(tab_6, text="6")
+    
 
     #On tab_1
     #New customer button
@@ -255,7 +279,7 @@ def home_page():
 
 def login():
 
-    def validateLogin(username, password):
+    def validateLogin(event):
 
         if username.get() == user_1.username and password.get() == user_1.password:
             tkWindow.destroy()
@@ -267,26 +291,35 @@ def login():
 
     #window
     tkWindow = Tk()
-    tkWindow.geometry("250x120")
+    tkWindow.geometry("250x130")
+    tkWindow.resizable(False, False)
     tkWindow.title('Login')
 
-    tkWindow.rowconfigure(0, weight=1, minsize=50)
-    tkWindow.columnconfigure(0, weight=1, minsize=50)
+    #Login frames
+    login_frame = Frame(tkWindow)
+    username_frame = Frame(login_frame)
+    password_frame = Frame(login_frame)
+    sub_btn_frame = Frame(login_frame)
+
+    login_frame.grid(row=0, column=0, padx=5, pady=5)
+    username_frame.grid(row=0, column=0, padx=5, pady=5)
+    password_frame.grid(row=1, column=0, padx=5, pady=5)
+    sub_btn_frame.grid(row=2, column=0, padx=5, pady=5)
 
     #username label and text entry box
-    usernameLabel = Label(tkWindow, text="Username").grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
+    usernameLabel = ttk.Label(username_frame, text="Username").grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
     username = StringVar()
-    usernameEntry = Entry(tkWindow, textvariable=username,).grid(row=0, column=1, padx=5, pady=5)  
+    usernameEntry = ttk.Entry(username_frame, textvariable=username,).grid(row=0, column=1, padx=5, pady=5)  
 
     #password label and password entry box
-    passwordLabel = Label(tkWindow,text="Password").grid(row=1, column=0, padx=5, pady=5, sticky="NSEW")  
+    passwordLabel = ttk.Label(password_frame,text="Password").grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")  
     password = StringVar()
-    passwordEntry = Entry(tkWindow, textvariable=password, show='*').grid(row=1, column=1, padx=5, pady=5, sticky="NSEW")  
-
-    validateLogin = partial(validateLogin, username, password)
+    passwordEntry = ttk.Entry(password_frame, textvariable=password, show='*').grid(row=0, column=1, padx=5, pady=5, sticky="NSEW")  
 
     #login button
-    loginButton = Button(tkWindow, text="Login", command=validateLogin).grid(row=4, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
+    loginButton = ttk.Button(sub_btn_frame, text="Login", command=validateLogin).grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
+
+    tkWindow.bind("<Return>", validateLogin)
 
     tkWindow.mainloop()
 
