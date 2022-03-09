@@ -183,20 +183,20 @@ def home_page():
     window.columnconfigure(0, weight=1, minsize=75)
     window.rowconfigure(1, weight=1, minsize=50)
 
-    toolbar_frame = Frame(window)
+    toolbar_frame = ttk.Frame(window)
     toolbar_frame.grid(row=0, column=0, padx=0, pady=0)
 
-    bold_btn = Button(toolbar_frame, text = "Bold")
+    bold_btn = ttk.Button(toolbar_frame, text = "Bold")
     bold_btn.grid(row=0, column=0, sticky="W", padx=0, pady=0)
 
 	# Creating and displaying of italic button
-    italic_btn = Button(toolbar_frame, text = "Italic")
+    italic_btn = ttk.Button(toolbar_frame, text = "Italic")
     italic_btn.grid(row=0, column=1, sticky="W", padx=0, pady=0)
 
     
 
     #Frame of all widgets on home page
-    main_frame = Frame(window)
+    main_frame = ttk.Frame(window)
     main_frame.grid(row=1, column=0, columnspan=3, sticky="NSEW")
 
     main_frame.columnconfigure(0, weight=1, minsize=50)
@@ -210,66 +210,76 @@ def home_page():
     
     
     #Creating tabs for Notebooks
-    tab_1 = Frame(home_notebook, bg="green")
-    tab_2 = Frame(home_notebook, bg="yellow")
-    tab_3 = Frame(home_notebook, bg="blue")
-    tab_4 = Frame(home_notebook, bg="indigo")
-    tab_5 = Frame(home_notebook, bg="violet")
-    tab_6 = Frame(home_notebook, bg="grey")
+    tab_1 = ttk.Frame(home_notebook)
+    tab_2 = ttk.Frame(home_notebook)
+    tab_3 = ttk.Frame(home_notebook)
+    tab_4 = ttk.Frame(home_notebook)
+    tab_5 = ttk.Frame(home_notebook)
+    tab_6 = ttk.Frame(home_notebook)
 
     #Product tab notebook
     product_notebook = ttk.Notebook(tab_3)
     product_notebook.grid(row=0, column=0)
 
-    product_tab_1 = Frame(product_notebook, bg="#F3DE8A")
+    product_tab_1 = ttk.Frame(product_notebook)
 
     product_notebook.add(product_tab_1, text="Pricing")
 
     #Products tab frames
-    product_frame_1 = Frame(product_tab_1)
+    product_frame_1 = ttk.Frame(product_tab_1)
     product_frame_1.grid(row=0, column=0, padx=5, pady=5)
 
     #Product tab info
-    product_model_label = Label(product_frame_1, text="Text Here")
+    product_model_frame = ttk.Labelframe(product_frame_1, text="Input")
+    product_model_frame.grid(row=0, column=0, padx=5, pady=5)
+
+    product_model_results_frame = ttk.Labelframe(product_frame_1, text="Results")
+    product_model_results_frame.grid(row=0, column=1, padx=5, pady=5)
+
+
+    product_model_label = ttk.Label(product_model_frame, text="Model")
     product_model_label.grid(row=0, column=0, padx=5, pady=5)
 
-    product_model_entry = Entry(product_frame_1, background="red")
+    product_model_entry = ttk.Entry(product_model_frame)
     product_model_entry.grid(row=0, column=1, padx=5, pady=5)
+
+    model_sub_btn = ttk.Button(product_model_frame, text="Submit")
+    model_sub_btn.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
 
     #detail tabs 1 & 2 are added to the main Notebook
     home_notebook.add(tab_1, text="Customers")
     home_notebook.add(tab_2, text="Contacts")
     home_notebook.add(tab_3, text="Products")    
-    home_notebook.add(tab_4, text="4")
-    home_notebook.add(tab_5, text="5")
-    home_notebook.add(tab_6, text="6")
+    home_notebook.add(tab_4, text="(Future Tab)")
+    home_notebook.add(tab_5, text="(Future Tab)")
+    home_notebook.add(tab_6, text="(Future Tab)")
     
 
     #On tab_1
     #New customer button
-    new_cust_but = Button(tab_1, text="Create New Customer", command=new_customer_pop)
+    new_cust_but = ttk.Button(tab_1, text="Create New Customer", command=new_customer_pop)
     new_cust_but.grid(row=0, column=0, sticky="NSEW", padx=10, pady=10)
 
-    search_btn = Button(tab_1, text="Search", command=query)
+    search_btn = ttk.Button(tab_1, text="Search", command=query)
     search_btn.grid(row=0, column=1)  
 
-    info_frame = Frame(tab_1)
+    info_frame = ttk.Frame(tab_1)
     info_frame.grid(row=1, column=0, padx=5, pady=5)
 
     #Customer first name label
-    display_fname = Label(info_frame, text="First name: ")
+    display_fname = ttk.Label(info_frame, text="First name: ")
     display_fname.grid(row=0, column=0, padx=5, pady=5)
 
     #Label for last name
-    display_lname = Label(info_frame, text="Last name: ")
+    display_lname = ttk.Label(info_frame, text="Last name: ")
     display_lname.grid(row=1, column=0, padx=5, pady=5)
 
     #Label for mobile number
-    display_mobile =Label(info_frame, text="Mobile: ")
+    display_mobile =ttk.Label(info_frame, text="Mobile: ")
     display_mobile.grid(row=2, column=0, padx=5, pady=5)
 
     #Label for email
-    display_email =Label(info_frame, text="Email: ")
+    display_email =ttk.Label(info_frame, text="Email: ")
     display_email.grid(row=3, column=0, padx=5, pady=5)
 
     
@@ -296,10 +306,10 @@ def login():
     tkWindow.title('Login')
 
     #Login frames
-    login_frame = Frame(tkWindow)
-    username_frame = Frame(login_frame)
-    password_frame = Frame(login_frame)
-    sub_btn_frame = Frame(login_frame)
+    login_frame = ttk.Frame(tkWindow)
+    username_frame = ttk.Frame(login_frame)
+    password_frame = ttk.Frame(login_frame)
+    sub_btn_frame = ttk.Frame(login_frame)
 
     login_frame.grid(row=0, column=0, padx=5, pady=5)
     username_frame.grid(row=0, column=0, padx=5, pady=5)
