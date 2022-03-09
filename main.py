@@ -1,3 +1,4 @@
+from distutils.cmd import Command
 from unittest.main import main
 import mysql.connector
 from tkinter import *
@@ -65,15 +66,15 @@ def new_customer_pop():
 
     
 
-    fname_label = Label(new_pop, text="First Name:")
-    lname_label = Label(new_pop, text="Last Name:")
-    mobile_label = Label(new_pop, text="Mobile:")
-    email_label = Label(new_pop, text="Email: ")
+    fname_label = ttk.Label(new_pop, text="First Name:")
+    lname_label = ttk.Label(new_pop, text="Last Name:")
+    mobile_label = ttk.Label(new_pop, text="Mobile:")
+    email_label = ttk.Label(new_pop, text="Email: ")
 
-    fname_entry = Entry(new_pop, textvariable=fname_var)
-    lname_entry = Entry(new_pop, textvariable=lname_var)
-    mobile_entry = Entry(new_pop, textvariable=mobile_var)
-    email_entry = Entry(new_pop, textvariable=email_var)
+    fname_entry = ttk.Entry(new_pop, textvariable=fname_var)
+    lname_entry = ttk.Entry(new_pop, textvariable=lname_var)
+    mobile_entry = ttk.Entry(new_pop, textvariable=mobile_var)
+    email_entry = ttk.Entry(new_pop, textvariable=email_var)
 
     fname_label.grid(row=0, column=0, sticky="NSEW", padx=5, pady=5)
     fname_entry.grid(row=0, column=1, padx=5, pady=5)
@@ -88,7 +89,7 @@ def new_customer_pop():
     email_entry.grid(row=3, column=1, padx=5, pady=5)
 
 
-    sub_btn = Button(new_pop, text="Submit", command=submit, width=10)
+    sub_btn = ttk.Button(new_pop, text="Submit", command=submit, width=10)
     sub_btn.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
 
     new_pop.mainloop()
@@ -175,6 +176,24 @@ def query():
 
 
 def home_page():
+
+    model = []
+
+    #Home page functions
+    def check_pricing():
+        model.append(model_var.get())
+        model_var.set("")
+        
+    
+    def print_results():
+        i = 0
+
+        for item in model:
+            result_label = Label(product_results_model, text=item, padx=5, pady=5)
+            result_label.grid(row=i, column=0)
+
+            i += 1
+
     window = Tk()
     window.title("Home Page")
     window.geometry("500x500")
@@ -233,18 +252,30 @@ def home_page():
     product_model_frame = ttk.Labelframe(product_frame_1, text="Input")
     product_model_frame.grid(row=0, column=0, padx=5, pady=5)
 
-    product_model_results_frame = ttk.Labelframe(product_frame_1, text="Results")
-    product_model_results_frame.grid(row=0, column=1, padx=5, pady=5)
+    product_results_frame = ttk.Labelframe(product_frame_1, text="Results")
+    product_results_frame.grid(row=0, column=1, padx=5, pady=5)
+
+    product_results_model = ttk.Frame(product_results_frame)
+    product_results_model.grid(row=0, column=0, padx=5, pady=5)
+
+    product_results_price = ttk.Frame(product_results_frame)
+    product_results_price.grid(row=0, column=1, padx=5, pady=5)
 
 
     product_model_label = ttk.Label(product_model_frame, text="Model")
     product_model_label.grid(row=0, column=0, padx=5, pady=5)
 
-    product_model_entry = ttk.Entry(product_model_frame)
+    #Model variable
+    model_var = StringVar()
+
+    product_model_entry = ttk.Entry(product_model_frame, textvariable=model_var)
     product_model_entry.grid(row=0, column=1, padx=5, pady=5)
 
-    model_sub_btn = ttk.Button(product_model_frame, text="Submit")
+    model_sub_btn = ttk.Button(product_model_frame, text="Submit", command=check_pricing)
     model_sub_btn.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+
+    run_btn = ttk.Button(product_frame_1, text="Run", command=print_results)
+    run_btn.grid(row=2, column=0, padx=5, pady=5)
 
     #detail tabs 1 & 2 are added to the main Notebook
     home_notebook.add(tab_1, text="Customers")
