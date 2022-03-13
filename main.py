@@ -259,20 +259,23 @@ def home_page():
     product_results_model.grid(row=0, column=0, padx=5, pady=5)
 
     product_results_price = ttk.Frame(product_results_frame)
-    product_results_price.grid(row=0, column=1, padx=5, pady=5)
-
-
-    product_model_label = ttk.Label(product_model_frame, text="Model")
-    product_model_label.grid(row=0, column=0, padx=5, pady=5)
+    product_results_price.grid(row=0, column=1, padx=5, pady=5)    
 
     #Model variable
     model_var = StringVar()
+    add_data_value = IntVar()
+    add_data_value.set(1)
 
+    product_model_label = ttk.Label(product_model_frame, text="Model")
+    product_model_label.grid(row=0, column=0, padx=5, pady=5)
     product_model_entry = ttk.Entry(product_model_frame, textvariable=model_var)
     product_model_entry.grid(row=0, column=1, padx=5, pady=5)
 
+    add_data = ttk.Checkbutton(product_model_frame, variable=add_data_value, text="Insert to database")
+    add_data.grid(row=1, column=0)
+
     model_sub_btn = ttk.Button(product_model_frame, text="Submit", command=check_pricing)
-    model_sub_btn.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+    model_sub_btn.grid(row=1, column=1, columnspan=2, padx=5, pady=5)
 
     run_btn = ttk.Button(product_frame_1, text="Run", command=print_results)
     run_btn.grid(row=2, column=0, padx=5, pady=5)
