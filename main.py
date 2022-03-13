@@ -40,29 +40,36 @@ def new_customer(fname, lname, mobile, email):
             connection.close()
             print("MySQL connection is closed")
 
-def write_model_data(code):
-    try:
-        connection = mysql.connector.connect(
-            host="127.0.0.1",
-            user="root",
-            password="Hayman_Robyn577",
-            database="product_info")
+def write_model_data(code, type):
 
-        mySql_insert_query = "insert into product_info.products (code) values (\"{}\");".format(code)
+    if type == 0:
+        pass
 
-        cursor = connection.cursor()
-        cursor.execute(mySql_insert_query)
-        connection.commit()
-        print(cursor.rowcount, "Record inserted successfully into info table")
-        cursor.close()
+    elif type == 1:
+        try:
+            connection = mysql.connector.connect(
+                host="127.0.0.1",
+                user="root",
+                password="Hayman_Robyn577",
+                database="product_info")
 
-    except mysql.connector.Error as error:
-        print("Failed to insert record into info table {}".format(error))
+            mySql_insert_query = "insert into product_info.products (code) values (\"{}\");".format(code)
 
-    finally:
-        if connection.is_connected():
-            connection.close()
-            print("MySQL connection is closed")
+            cursor = connection.cursor()
+            cursor.execute(mySql_insert_query)
+            connection.commit()
+            print(cursor.rowcount, "Record inserted successfully into info table")
+            cursor.close()
+
+        except mysql.connector.Error as error:
+            print("Failed to insert record into info table {}".format(error))
+
+        finally:
+            if connection.is_connected():
+                connection.close()
+                print("MySQL connection is closed")
+
+    
 
 def new_customer_pop():
 
@@ -214,7 +221,7 @@ def home_page():
         i = 0
 
         for item in model:
-            write_model_data(item)
+            write_model_data(item, add_data_value.get())
             result_label = Label(product_results_model, text=item, padx=5, pady=5)
             result_label.grid(row=i, column=0)
 
