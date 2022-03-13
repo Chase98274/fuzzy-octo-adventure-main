@@ -227,28 +227,37 @@ def home_page():
 
             i += 1
 
+    def test():
+        answer = messagebox.askyesno("Confirmation", "Are you sure you want to logout?")
+
+        if answer:
+            window.destroy()
+            login()
+
     window = Tk()
     window.title("Home Page")
     window.geometry("500x500")
     
 
-    window.columnconfigure(0, weight=1, minsize=75)
-    window.rowconfigure(1, weight=1, minsize=50)
-
+    
     toolbar_frame = ttk.Frame(window)
     toolbar_frame.grid(row=0, column=0, padx=0, pady=0)
 
-    bold_btn = ttk.Button(toolbar_frame, text = "Bold")
+    bold_btn = ttk.Button(toolbar_frame, text = "Logout", command=test)
     bold_btn.grid(row=0, column=0, sticky="W", padx=0, pady=0)
 
 	# Creating and displaying of italic button
-    italic_btn = ttk.Button(toolbar_frame, text = "Italic")
+    italic_btn = ttk.Button(toolbar_frame, text = "Button")
     italic_btn.grid(row=0, column=1, sticky="W", padx=0, pady=0)
 
     
 
     #Frame of all widgets on home page
     main_frame = ttk.Frame(window)
+
+    main_frame.columnconfigure(0, weight=1, minsize=75)
+    main_frame.rowconfigure(1, weight=1, minsize=50)
+
     main_frame.grid(row=1, column=0, columnspan=3, sticky="NSEW")
 
     main_frame.columnconfigure(0, weight=1, minsize=50)
@@ -357,7 +366,15 @@ def home_page():
 def login():
 
     def validateLogin(event):
+        if username.get() == user_1.username and password.get() == user_1.password:
+            tkWindow.destroy()
+            home_page()
+        else:
+            messagebox.showerror("Incorrect details", "The username or password is incorrect. Please try again.")
+            username.set("")
+            password.set("")
 
+    def validate_login():
         if username.get() == user_1.username and password.get() == user_1.password:
             tkWindow.destroy()
             home_page()
@@ -394,7 +411,7 @@ def login():
     passwordEntry = ttk.Entry(password_frame, textvariable=password, show='*').grid(row=0, column=1, padx=5, pady=5, sticky="NSEW")  
 
     #login button
-    loginButton = ttk.Button(sub_btn_frame, text="Login", command=validateLogin).grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
+    loginButton = ttk.Button(sub_btn_frame, text="Login", command=validate_login).grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
 
     tkWindow.bind("<Return>", validateLogin)
 
