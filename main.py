@@ -1,4 +1,3 @@
-from distutils.cmd import Command
 from unittest.main import main
 import mysql.connector
 from tkinter import *
@@ -32,6 +31,7 @@ def new_customer(fname, lname, mobile, email):
         print(cursor.rowcount, "Record inserted successfully into info table")
         cursor.close()
 
+
     except mysql.connector.Error as error:
         print("Failed to insert record into info table {}".format(error))
 
@@ -46,28 +46,30 @@ def write_model_data(code, type):
         pass
 
     elif type == 1:
-        try:
-            connection = mysql.connector.connect(
-                host="127.0.0.1",
-                user="root",
-                password="Hayman_Robyn577",
-                database="product_info")
 
-            mySql_insert_query = "insert into product_info.products (code) values (\"{}\");".format(code)
+        if code != "":
+            try:
+                connection = mysql.connector.connect(
+                    host="127.0.0.1",
+                    user="root",
+                    password="Hayman_Robyn577",
+                    database="product_info")
 
-            cursor = connection.cursor()
-            cursor.execute(mySql_insert_query)
-            connection.commit()
-            print(cursor.rowcount, "Record inserted successfully into info table")
-            cursor.close()
+                mySql_insert_query = "insert into product_info.products (code) values (\"{}\");".format(code)
 
-        except mysql.connector.Error as error:
-            print("Failed to insert record into info table {}".format(error))
+                cursor = connection.cursor()
+                cursor.execute(mySql_insert_query)
+                connection.commit()
+                print(cursor.rowcount, "Record inserted successfully into info table")
+                cursor.close()
 
-        finally:
-            if connection.is_connected():
-                connection.close()
-                print("MySQL connection is closed")
+            except mysql.connector.Error as error:
+                print("Failed to insert record into info table {}".format(error))
+
+            finally:
+                if connection.is_connected():
+                    connection.close()
+                    print("MySQL connection is closed")
 
     
 
