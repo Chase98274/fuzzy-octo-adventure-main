@@ -16,6 +16,8 @@ def model_code_write():
     with open("data\models.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(model)
+    
+    messagebox.showinfo("Models", "{} were added successfully".format(model))
 
 
 def new_customer_pop():
@@ -37,10 +39,6 @@ def new_customer_pop():
         messagebox.showinfo("Customer Registration", "{} has been successfully added".format(fname))
 
         new_pop.destroy()
-
-
-
-    
 
     fname_label = ttk.Label(new_pop, text="First Name:")
     lname_label = ttk.Label(new_pop, text="Last Name:")
@@ -100,13 +98,7 @@ def new_customer_pop():
 
     search_btn_query = Button(search_frame, text="Search")
     search_btn_query.grid(row=0, column=1)
-
-    
-
-    
-
-
-    
+ 
 
 
 
@@ -141,15 +133,7 @@ def home_page():
 
     toolbar_frame = ttk.Frame(window)
     toolbar_frame.grid(row=0, column=0, padx=0, pady=0)
-
-    bold_btn = ttk.Button(toolbar_frame, text="Bold")
-    bold_btn.grid(row=0, column=0, sticky="W", padx=0, pady=0)
-
-	# Creating and displaying of italic button
-    italic_btn = ttk.Button(toolbar_frame, text="Italic")
-    italic_btn.grid(row=0, column=1, sticky="W", padx=0, pady=0)
-
-    
+  
 
     #Frame of all widgets on home page
     main_frame = ttk.Frame(window)
@@ -168,21 +152,12 @@ def home_page():
     #Creating tabs for Notebooks
     tab_1 = ttk.Frame(home_notebook)
     tab_2 = ttk.Frame(home_notebook)
-    tab_3 = ttk.Frame(home_notebook)
-    tab_4 = ttk.Frame(home_notebook)
-    tab_5 = ttk.Frame(home_notebook)
-    tab_6 = ttk.Frame(home_notebook)
 
-    #Product tab notebook
-    product_notebook = ttk.Notebook(tab_3)
-    product_notebook.grid(row=0, column=0)
-
-    product_tab_1 = ttk.Frame(product_notebook)
-
-    product_notebook.add(product_tab_1, text="Pricing")
+    home_notebook.add(tab_1, text="Products")    
+    home_notebook.add(tab_2, text="Customers")
 
     #Products tab frames
-    product_frame_1 = ttk.Frame(product_tab_1)
+    product_frame_1 = ttk.Frame(tab_1)
     product_frame_1.grid(row=0, column=0, padx=5, pady=5)
 
     #Product tab info
@@ -215,23 +190,17 @@ def home_page():
     run_btn.grid(row=2, column=0, padx=5, pady=5)
 
     #detail tabs 1 & 2 are added to the main Notebook
-    home_notebook.add(tab_1, text="Customers")
-    home_notebook.add(tab_2, text="Contacts")
-    home_notebook.add(tab_3, text="Products")    
-    home_notebook.add(tab_4, text="(Future Tab)")
-    home_notebook.add(tab_5, text="(Future Tab)")
-    home_notebook.add(tab_6, text="(Future Tab)")
     
 
     #On tab_1
     #New customer button
-    new_cust_but = ttk.Button(tab_1, text="Create New Customer", command=new_customer_pop)
+    new_cust_but = ttk.Button(tab_2, text="Create New Customer", command=new_customer_pop)
     new_cust_but.grid(row=0, column=0, sticky="NSEW", padx=10, pady=10)
 
-    search_btn = ttk.Button(tab_1, text="Search")
+    search_btn = ttk.Button(tab_2, text="Search")
     search_btn.grid(row=0, column=1)  
 
-    info_frame = ttk.Frame(tab_1)
+    info_frame = ttk.Frame(tab_2)
     info_frame.grid(row=1, column=0, padx=5, pady=5)
 
     #Customer first name label
@@ -250,55 +219,6 @@ def home_page():
     display_email =ttk.Label(info_frame, text="Email: ")
     display_email.grid(row=3, column=0, padx=5, pady=5)
 
-    
-
     window.mainloop()
 
-
-def login():
-
-    def validateLogin(event):
-
-        if username.get() == user_1.username and password.get() == user_1.password:
-            tkWindow.destroy()
-            home_page()
-        else:
-            messagebox.showerror("Incorrect details", "The username or password is incorrect. Please try again.")
-            username.set("")
-            password.set("")
-
-    #window
-    tkWindow = Tk()
-    tkWindow.geometry("250x130")
-    tkWindow.resizable(False, False)
-    tkWindow.title('Login')
-
-    #Login frames
-    login_frame = ttk.Frame(tkWindow)
-    username_frame = ttk.Frame(login_frame)
-    password_frame = ttk.Frame(login_frame)
-    sub_btn_frame = ttk.Frame(login_frame)
-
-    login_frame.grid(row=0, column=0, padx=5, pady=5)
-    username_frame.grid(row=0, column=0, padx=5, pady=5)
-    password_frame.grid(row=1, column=0, padx=5, pady=5)
-    sub_btn_frame.grid(row=2, column=0, padx=5, pady=5)
-
-    #username label and text entry box
-    usernameLabel = ttk.Label(username_frame, text="Username").grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
-    username = StringVar()
-    usernameEntry = ttk.Entry(username_frame, textvariable=username,).grid(row=0, column=1, padx=5, pady=5)  
-
-    #password label and password entry box
-    passwordLabel = ttk.Label(password_frame,text="Password").grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")  
-    password = StringVar()
-    passwordEntry = ttk.Entry(password_frame, textvariable=password, show='*').grid(row=0, column=1, padx=5, pady=5, sticky="NSEW")  
-
-    #login button
-    loginButton = ttk.Button(sub_btn_frame, text="Login", command=validateLogin).grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
-
-    tkWindow.bind("<Return>", validateLogin)
-
-    tkWindow.mainloop()
-
-login()
+home_page()
