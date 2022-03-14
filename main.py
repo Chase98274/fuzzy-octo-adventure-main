@@ -1,10 +1,7 @@
-from distutils.cmd import Command
-from unittest.main import main
-import mysql.connector
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-from functools import partial
+import csv
 
 class Users():
     def __init__(self, username, password):
@@ -13,32 +10,13 @@ class Users():
     
 user_1 = Users("chase", "1234")
 
+model = []
 
-def new_customer(fname, lname, mobile, email):
-    """This function creates a connection to the database then runs a query to insert the new customer"""
-    try:
-        connection = mysql.connector.connect(
-            host="127.0.0.1",
-            user="root",
-            password="Hayman_Robyn577",
-            database="customers")
+def model_code_write():
+    with open("data\models.csv", "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(model)
 
-        mySql_insert_query = "INSERT INTO info (first_name, last_name, mobile, email) VALUES (%s, %s, %s, %s)"
-        data = (fname, lname, mobile, email)
-
-        cursor = connection.cursor()
-        cursor.execute(mySql_insert_query, data)
-        connection.commit()
-        print(cursor.rowcount, "Record inserted successfully into info table")
-        cursor.close()
-
-    except mysql.connector.Error as error:
-        print("Failed to insert record into info table {}".format(error))
-
-    finally:
-        if connection.is_connected():
-            connection.close()
-            print("MySQL connection is closed")
 
 def new_customer_pop():
 
@@ -55,8 +33,6 @@ def new_customer_pop():
         lname = lname_var.get().strip().lower().capitalize()
         mobile = mobile_var.get().strip()
         email = email_var.get().strip()
-
-        new_customer(fname, lname, mobile, email)
 
         messagebox.showinfo("Customer Registration", "{} has been successfully added".format(fname))
 
@@ -94,47 +70,6 @@ def new_customer_pop():
 
     new_pop.mainloop()
     
-def query():
-
-    def search_submit():
-        mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="Hayman_Robyn577",
-        database="customers")
-
-        mycursor = mydb.cursor()
-
-        if mode.get() == "1":
-            mycursor.execute("SELECT * FROM customers.info WHERE first_name = \"{}\";".format(search_var.get().strip().lower().capitalize()))
-            myresult = mycursor.fetchall()
-            for x in myresult:
-                messagebox.showinfo("Results", x)
-
-        elif mode.get() == "2":
-            mycursor.execute("SELECT * FROM customers.info WHERE last_name = \"{}\";".format(search_var.get().strip().lower().capitalize()))
-            myresult = mycursor.fetchall()
-            for x in myresult:
-                messagebox.showinfo("Results", x)
-
-        elif mode.get() == "3":
-            
-            mycursor.execute("SELECT * FROM customers.info WHERE mobile = \"{}\";".format(search_var.get().strip()))
-            myresult = mycursor.fetchall()
-            for x in myresult:
-                messagebox.showinfo("Results", x)
-
-        elif mode.get() == "4":
-            
-            mycursor.execute("SELECT * FROM customers.info WHERE email = \"{}\";".format(search_var.get().strip().lower()))
-            myresult = mycursor.fetchall()
-            for x in myresult:
-                messagebox.showinfo("Results", x)
-
-        else:
-            messagebox.showinfo("Oh no!", "Sorry that was a bad option!")
-        
-        search_pop.destroy()
     
     search_pop = Tk()
     search_pop.title("Search")
@@ -163,7 +98,7 @@ def query():
     search_entry = Entry(search_frame, textvariable=search_var)
     search_entry.grid(row=0, column=0, padx=5, pady=5)
 
-    search_btn_query = Button(search_frame, text="Search", command=search_submit)
+    search_btn_query = Button(search_frame, text="Search")
     search_btn_query.grid(row=0, column=1)
 
     
@@ -177,7 +112,9 @@ def query():
 
 def home_page():
 
-    model = []
+    def step():
+        print_results()
+        model_code_write()
 
     #Home page functions
     def check_pricing():
@@ -205,11 +142,11 @@ def home_page():
     toolbar_frame = ttk.Frame(window)
     toolbar_frame.grid(row=0, column=0, padx=0, pady=0)
 
-    bold_btn = ttk.Button(toolbar_frame, text = "Bold")
+    bold_btn = ttk.Button(toolbar_frame, text="Bold")
     bold_btn.grid(row=0, column=0, sticky="W", padx=0, pady=0)
 
 	# Creating and displaying of italic button
-    italic_btn = ttk.Button(toolbar_frame, text = "Italic")
+    italic_btn = ttk.Button(toolbar_frame, text="Italic")
     italic_btn.grid(row=0, column=1, sticky="W", padx=0, pady=0)
 
     
@@ -274,7 +211,7 @@ def home_page():
     model_sub_btn = ttk.Button(product_model_frame, text="Submit", command=check_pricing)
     model_sub_btn.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
 
-    run_btn = ttk.Button(product_frame_1, text="Run", command=print_results)
+    run_btn = ttk.Button(product_frame_1, text="Run", command=step)
     run_btn.grid(row=2, column=0, padx=5, pady=5)
 
     #detail tabs 1 & 2 are added to the main Notebook
@@ -291,7 +228,7 @@ def home_page():
     new_cust_but = ttk.Button(tab_1, text="Create New Customer", command=new_customer_pop)
     new_cust_but.grid(row=0, column=0, sticky="NSEW", padx=10, pady=10)
 
-    search_btn = ttk.Button(tab_1, text="Search", command=query)
+    search_btn = ttk.Button(tab_1, text="Search")
     search_btn.grid(row=0, column=1)  
 
     info_frame = ttk.Frame(tab_1)
