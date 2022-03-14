@@ -12,12 +12,12 @@ user_1 = Users("chase", "1234")
 
 model = []
 
-def model_code_write():
+def model_code_write(event=None):
     with open("data\models.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(model)
     
-    messagebox.showinfo("Models", "{} were added successfully".format(model))
+    messagebox.showinfo("Models", "{} has been added successfully".format(model))
 
 
 def new_customer_pop():
@@ -103,13 +103,17 @@ def new_customer_pop():
 
 
 def home_page():
+    #Home page functions
+    def kill(event=None):
+        check_pricing()
+        model_code_write()
+        window.destroy()
 
     def step():
         print_results()
         model_code_write()
 
-    #Home page functions
-    def check_pricing():
+    def check_pricing(event=None):
         model.append(model_var.get())
         model_var.set("")
         
@@ -130,11 +134,7 @@ def home_page():
 
     window.columnconfigure(0, weight=1, minsize=75)
     window.rowconfigure(1, weight=1, minsize=50)
-
-    toolbar_frame = ttk.Frame(window)
-    toolbar_frame.grid(row=0, column=0, padx=0, pady=0)
   
-
     #Frame of all widgets on home page
     main_frame = ttk.Frame(window)
     main_frame.grid(row=1, column=0, columnspan=3, sticky="NSEW")
@@ -145,13 +145,12 @@ def home_page():
     #Creating main Notebook
     home_notebook = ttk.Notebook(main_frame)
     home_notebook.grid(row=1, column=0, sticky="NSEW")
-
-    
-    
-    
+  
     #Creating tabs for Notebooks
     tab_1 = ttk.Frame(home_notebook)
     tab_2 = ttk.Frame(home_notebook)
+
+    
 
     home_notebook.add(tab_1, text="Products")    
     home_notebook.add(tab_2, text="Customers")
@@ -182,6 +181,10 @@ def home_page():
 
     product_model_entry = ttk.Entry(product_model_frame, textvariable=model_var)
     product_model_entry.grid(row=0, column=1, padx=5, pady=5)
+
+    product_model_entry.bind("<Return>", check_pricing)
+    product_model_entry.bind("<F4>", model_code_write)
+    product_model_entry.bind("<F1>", kill)
 
     model_sub_btn = ttk.Button(product_model_frame, text="Submit", command=check_pricing)
     model_sub_btn.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
