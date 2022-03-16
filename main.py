@@ -13,7 +13,7 @@ user_1 = Users("chase", "1234")
 model = []
 
 def model_code_write(event=None):
-    with open("data\models.csv", "w", newline="") as file:
+    with open("data\models.csv", "a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(model)
     
