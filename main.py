@@ -1,6 +1,8 @@
+import datetime
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from numpy import product
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -16,6 +18,7 @@ user_1 = Users("chase", "1234")
 
 models = []
 na = []
+product_values = {}
 
 def check_pricing():
     driver = webdriver.Chrome(
@@ -35,9 +38,12 @@ def check_pricing():
 
             model = driver.find_element(By.CSS_SELECTOR, "p.style-number").text
             print("Text is: " + model)
+            
 
-            price = driver.find_element(By.CSS_SELECTOR, "p.price").text
+            price = driver.find_element(By.CSS_SELECTOR, "p.price").text.replace("$", "").replace(",", "")
             print("Price: " + price)
+
+            product_values[model] = price
 
             driver.find_element(By.ID, "searchterm").clear()
         
@@ -45,14 +51,18 @@ def check_pricing():
             driver.find_element(By.ID, "searchterm").clear()
             print("That was a bad option!")
             na.append(item)
-
-
+    
+        model_code_write(model)
+        
 
 def model_code_write(model):
-    models.append(model)
+
+    for x, y in product_values.items():
+        print(x, y)
+
     with open("data\models.csv", "a", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow([model])
+        writer.writerow([model, product_values[model], datetime.datetime.now()])
 
 
 def new_customer_pop():
@@ -141,14 +151,25 @@ def home_page():
     #Home page functions
     def kill(event=None):
         print(models)
+        print(product_values)
+        messagebox.showinfo("Items added",product_values)
         window.destroy()
 
     def step_write(event=None):
-        model_code_write(model_var.get())
-        model_var.set("")
+        if model_var.get() != "":
+            models.append(model_var.get())
+            model_var.set("")
+        else:
+            messagebox.showerror("Invalid Input", "You have not entered any models.")
+            model_var.set("")
 
     def step_price():
-        check_pricing()
+        if len(models) > 0:
+            check_pricing()
+
+            messagebox.showinfo("Items added", product_values)
+        else:
+            messagebox.showerror("Invalid Input", "You have not entered any models.")
 
     window = Tk()
     window.title("Home Page")
@@ -245,8 +266,6 @@ def home_page():
     display_email.grid(row=3, column=0, padx=5, pady=5)
 
     window.mainloop()
-
-print(models)
 
 
 home_page()
