@@ -16,8 +16,9 @@ class Users():
     
 user_1 = Users("chase", "1234")
 
-models = []
-na = []
+all_models = []
+available_models =[]
+unavailable_models = []
 product_values = {}
 
 def check_pricing():
@@ -25,10 +26,8 @@ def check_pricing():
     executable_path="C:\\Users\\chase\\OneDrive\\Documents\\Coding\\price_change\\chromedriver.exe")
     driver.get("https://www.100percent.co.nz/")
 
-    for item in models:
-
+    for item in all_models:
         try:    
-
             driver.implicitly_wait(10)
             driver.maximize_window()
 
@@ -37,29 +36,23 @@ def check_pricing():
             searchElement.send_keys(Keys.ENTER)
 
             model = driver.find_element(By.CSS_SELECTOR, "p.style-number").text
-            print("Text is: " + model)
-            
-
             price = driver.find_element(By.CSS_SELECTOR, "p.price").text.replace("$", "").replace(",", "")
-            print("Price: " + price)
+            driver.find_element(By.ID, "searchterm").clear()
 
             product_values[model] = price
-
-            driver.find_element(By.ID, "searchterm").clear()
+            available_models.append(model)
         
         except:
             driver.find_element(By.ID, "searchterm").clear()
-            print("That was a bad option!")
-            na.append(item)
+            unavailable_models.append(item)
     
         model_code_write(model)
-        
+    print(all_models)
+    print(available_models)
+    print(unavailable_models)
+
 
 def model_code_write(model):
-
-    for x, y in product_values.items():
-        print(x, y)
-
     with open("data\models.csv", "a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow([model, product_values[model], datetime.datetime.now()])
@@ -150,26 +143,32 @@ def new_customer_pop():
 def home_page():
     #Home page functions
     def kill(event=None):
-        print(models)
-        print(product_values)
-        messagebox.showinfo("Items added",product_values)
         window.destroy()
 
     def step_write(event=None):
         if model_var.get() != "":
-            models.append(model_var.get())
+            all_models.append(model_var.get())
             model_var.set("")
         else:
             messagebox.showerror("Invalid Input", "You have not entered any models.")
             model_var.set("")
 
     def step_price():
-        if len(models) > 0:
+        if len(all_models) > 0:
             check_pricing()
-
-            messagebox.showinfo("Items added", product_values)
+            show_results()
         else:
             messagebox.showerror("Invalid Input", "You have not entered any models.")
+
+    def show_results():
+
+        i = 0
+        for (model, price) in product_values.items():
+            ttk.Label(product_results_model, text="{}:".format(model)).grid(row=i, column=0, pady=5)
+            ttk.Label(product_results_price, text="${}".format(price)).grid(row=i, column=0, pady=5)
+            i += 1
+
+            
 
     window = Tk()
     window.title("Home Page")
