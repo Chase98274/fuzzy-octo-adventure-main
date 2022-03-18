@@ -1,6 +1,10 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
 import csv
 
 class Users():
@@ -10,14 +14,45 @@ class Users():
     
 user_1 = Users("chase", "1234")
 
-model = []
+models = []
+na = []
 
-def model_code_write(event=None):
+def check_pricing():
+    driver = webdriver.Chrome(
+    executable_path="C:\\Users\\chase\\OneDrive\\Documents\\Coding\\price_change\\chromedriver.exe")
+    driver.get("https://www.100percent.co.nz/")
+
+    for item in models:
+
+        try:    
+
+            driver.implicitly_wait(10)
+            driver.maximize_window()
+
+            searchElement = driver.find_element(By.ID, "searchterm")
+            searchElement.send_keys(item)
+            searchElement.send_keys(Keys.ENTER)
+
+            model = driver.find_element(By.CSS_SELECTOR, "p.style-number").text
+            print("Text is: " + model)
+
+            price = driver.find_element(By.CSS_SELECTOR, "p.price").text
+            print("Price: " + price)
+
+            driver.find_element(By.ID, "searchterm").clear()
+        
+        except:
+            driver.find_element(By.ID, "searchterm").clear()
+            print("That was a bad option!")
+            na.append(item)
+
+
+
+def model_code_write(model):
+    models.append(model)
     with open("data\models.csv", "a", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow(model)
-    
-    messagebox.showinfo("Models", "{} has been added successfully".format(model))
+        writer.writerow([model])
 
 
 def new_customer_pop():
@@ -105,27 +140,15 @@ def new_customer_pop():
 def home_page():
     #Home page functions
     def kill(event=None):
-        check_pricing()
-        model_code_write()
+        print(models)
         window.destroy()
 
-    def step():
-        print_results()
-        model_code_write()
-
-    def check_pricing(event=None):
-        model.append(model_var.get())
+    def step_write(event=None):
+        model_code_write(model_var.get())
         model_var.set("")
-        
-    
-    def print_results():
-        i = 0
 
-        for item in model:
-            result_label = Label(product_results_model, text=item, padx=5, pady=5)
-            result_label.grid(row=i, column=0)
-
-            i += 1
+    def step_price():
+        check_pricing()
 
     window = Tk()
     window.title("Home Page")
@@ -182,15 +205,14 @@ def home_page():
     product_model_entry = ttk.Entry(product_model_frame, textvariable=model_var)
     product_model_entry.grid(row=0, column=1, padx=5, pady=5)
 
-    product_model_entry.bind("<Return>", check_pricing)
-    product_model_entry.bind("<F4>", model_code_write)
+    product_model_entry.bind("<Return>", step_write)
     product_model_entry.bind("<F1>", kill)
 
-    model_sub_btn = ttk.Button(product_model_frame, text="Submit", command=check_pricing)
+    model_sub_btn = ttk.Button(product_model_frame, text="Submit", command=step_write)
     model_sub_btn.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
 
-    run_btn = ttk.Button(product_frame_1, text="Run", command=step)
-    run_btn.grid(row=2, column=0, padx=5, pady=5)
+    check_btn = ttk.Button(product_model_frame, text="Check Price", command=step_price)
+    check_btn.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
 
     #detail tabs 1 & 2 are added to the main Notebook
     
@@ -223,5 +245,8 @@ def home_page():
     display_email.grid(row=3, column=0, padx=5, pady=5)
 
     window.mainloop()
+
+print(models)
+
 
 home_page()
