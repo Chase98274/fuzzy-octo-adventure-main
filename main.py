@@ -16,6 +16,9 @@ class Users():
     
 user_1 = Users("chase", "1234")
 
+csv_data = []
+csv_dictionary = {}
+
 all_models = []
 available_models =[]
 unavailable_models = []
@@ -23,7 +26,7 @@ product_values = {}
 
 def check_pricing():
     driver = webdriver.Chrome(
-    executable_path="C:\\Users\\chase\\OneDrive\\Documents\\Coding\\price_change\\chromedriver.exe")
+    executable_path="C://Users//chase//OneDrive//Documents//Coding//fuzzy-octo-adventure-main//chromedriver.exe")
     driver.get("https://www.100percent.co.nz/")
 
     for item in all_models:
@@ -51,12 +54,30 @@ def check_pricing():
     print(available_models)
     print(unavailable_models)
 
+def model_price_check_csv():
+    with open("data\models.csv", mode="r") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
+        csv_clean_data = list(csv_reader)
+
+        i = 0
+        for row in csv_clean_data:
+            csv_dictionary[csv_clean_data[i][0]] = csv_clean_data[i][1]
+            i += 1
+        print(csv_dictionary)
+    
+    csv_file.close()
+            
+
 
 def model_code_write(model):
     with open("data\models.csv", "a", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow([model, product_values[model], datetime.datetime.now()])
+        if model in csv_dictionary:
+            pass
 
+        if model not in csv_dictionary:
+            writer = csv.writer(file)
+            writer.writerow([model, product_values[model], datetime.datetime.now()])
+            file.close()
 
 def new_customer_pop():
 
@@ -126,29 +147,33 @@ def new_customer_pop():
               "Email" : "4"}
     i = 1
     for (text, value) in values.items():
-        Radiobutton(search_par, text = text, variable = mode,
+        ttk.Radiobutton(search_par, text = text, variable = mode,
             value = value).grid(row=i, column=0, pady = 5)
         i += 1
 
     
-    search_entry = Entry(search_frame, textvariable=search_var)
+    search_entry = ttk.Entry(search_frame, textvariable=search_var)
     search_entry.grid(row=0, column=0, padx=5, pady=5)
 
-    search_btn_query = Button(search_frame, text="Search")
+    search_btn_query = ttk.Button(search_frame, text="Search")
     search_btn_query.grid(row=0, column=1)
  
-
-
-
 def home_page():
+    model_price_check_csv()
+
     #Home page functions
     def kill(event=None):
+        print(csv_data)
         window.destroy()
 
     def step_write(event=None):
-        if model_var.get() != "":
+        model_var.set(model_var.get().upper().strip())
+        step_model = model_var.get()
+
+        if step_model != "":
             all_models.append(model_var.get())
             model_var.set("")
+
         else:
             messagebox.showerror("Invalid Input", "You have not entered any models.")
             model_var.set("")
@@ -159,6 +184,10 @@ def home_page():
             show_results()
         else:
             messagebox.showerror("Invalid Input", "You have not entered any models.")
+
+    def show_saved_models():
+            pass
+
 
     def show_results():
 
@@ -173,7 +202,6 @@ def home_page():
     window = Tk()
     window.title("Home Page")
     window.geometry("500x500")
-    
 
     window.columnconfigure(0, weight=1, minsize=75)
     window.rowconfigure(1, weight=1, minsize=50)
