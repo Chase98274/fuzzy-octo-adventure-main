@@ -58,12 +58,15 @@ def model_price_check_csv():
     with open("data\models.csv", mode="r") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=",")
         csv_clean_data = list(csv_reader)
-
-        i = 0
-        for row in csv_clean_data:
-            csv_dictionary[csv_clean_data[i][0]] = csv_clean_data[i][1]
-            i += 1
-        print(csv_dictionary)
+        try:
+            i = 0
+            for row in csv_clean_data:
+                csv_dictionary[csv_clean_data[i][0]] = csv_clean_data[i][1]
+                i += 1
+            print(csv_dictionary)
+        except:
+            messagebox.showerror("CSV file error", "There was problem accessing the local csv file please contact Chase Winder. Ph: 027 601 3216")
+        
     
     csv_file.close()
             
