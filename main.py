@@ -1,10 +1,13 @@
-from distutils.cmd import Command
-from unittest.main import main
-import mysql.connector
+import datetime
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-from functools import partial
+from numpy import product
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
+import csv
 
 class Users():
     def __init__(self, username, password):
@@ -13,32 +16,68 @@ class Users():
     
 user_1 = Users("chase", "1234")
 
+csv_data = []
+csv_dictionary = {}
 
-def new_customer(fname, lname, mobile, email):
-    """This function creates a connection to the database then runs a query to insert the new customer"""
-    try:
-        connection = mysql.connector.connect(
-            host="127.0.0.1",
-            user="root",
-            password="Hayman_Robyn577",
-            database="customers")
+all_models = []
+available_models =[]
+unavailable_models = []
+product_values = {}
 
-        mySql_insert_query = "INSERT INTO info (first_name, last_name, mobile, email) VALUES (%s, %s, %s, %s)"
-        data = (fname, lname, mobile, email)
+def check_pricing():
+    driver = webdriver.Chrome(
+    executable_path="C://Users//chase//OneDrive//Documents//Coding//fuzzy-octo-adventure-main//chromedriver.exe")
+    driver.get("https://www.100percent.co.nz/")
 
-        cursor = connection.cursor()
-        cursor.execute(mySql_insert_query, data)
-        connection.commit()
-        print(cursor.rowcount, "Record inserted successfully into info table")
-        cursor.close()
+    for item in all_models:
+        try:    
+            driver.implicitly_wait(10)
+            driver.maximize_window()
 
-    except mysql.connector.Error as error:
-        print("Failed to insert record into info table {}".format(error))
+            searchElement = driver.find_element(By.ID, "searchterm")
+            searchElement.send_keys(item)
+            searchElement.send_keys(Keys.ENTER)
 
-    finally:
-        if connection.is_connected():
-            connection.close()
-            print("MySQL connection is closed")
+            model = driver.find_element(By.CSS_SELECTOR, "p.style-number").text
+            price = driver.find_element(By.CSS_SELECTOR, "p.price").text.replace("$", "").replace(",", "")
+            driver.find_element(By.ID, "searchterm").clear()
+
+            product_values[model] = price
+            available_models.append(model)
+        
+        except:
+            driver.find_element(By.ID, "searchterm").clear()
+            unavailable_models.append(item)
+    
+        model_code_write(model)
+    print(all_models)
+    print(available_models)
+    print(unavailable_models)
+
+def model_price_check_csv():
+    with open("data\models.csv", mode="r") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
+        csv_clean_data = list(csv_reader)
+
+        i = 0
+        for row in csv_clean_data:
+            csv_dictionary[csv_clean_data[i][0]] = csv_clean_data[i][1]
+            i += 1
+        print(csv_dictionary)
+    
+    csv_file.close()
+            
+
+
+def model_code_write(model):
+    with open("data\models.csv", "a", newline="") as file:
+        if model in csv_dictionary:
+            pass
+
+        if model not in csv_dictionary:
+            writer = csv.writer(file)
+            writer.writerow([model, product_values[model], datetime.datetime.now()])
+            file.close()
 
 def new_customer_pop():
 
@@ -56,15 +95,9 @@ def new_customer_pop():
         mobile = mobile_var.get().strip()
         email = email_var.get().strip()
 
-        new_customer(fname, lname, mobile, email)
-
         messagebox.showinfo("Customer Registration", "{} has been successfully added".format(fname))
 
         new_pop.destroy()
-
-
-
-    
 
     fname_label = ttk.Label(new_pop, text="First Name:")
     lname_label = ttk.Label(new_pop, text="Last Name:")
@@ -94,47 +127,6 @@ def new_customer_pop():
 
     new_pop.mainloop()
     
-def query():
-
-    def search_submit():
-        mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="Hayman_Robyn577",
-        database="customers")
-
-        mycursor = mydb.cursor()
-
-        if mode.get() == "1":
-            mycursor.execute("SELECT * FROM customers.info WHERE first_name = \"{}\";".format(search_var.get().strip().lower().capitalize()))
-            myresult = mycursor.fetchall()
-            for x in myresult:
-                messagebox.showinfo("Results", x)
-
-        elif mode.get() == "2":
-            mycursor.execute("SELECT * FROM customers.info WHERE last_name = \"{}\";".format(search_var.get().strip().lower().capitalize()))
-            myresult = mycursor.fetchall()
-            for x in myresult:
-                messagebox.showinfo("Results", x)
-
-        elif mode.get() == "3":
-            
-            mycursor.execute("SELECT * FROM customers.info WHERE mobile = \"{}\";".format(search_var.get().strip()))
-            myresult = mycursor.fetchall()
-            for x in myresult:
-                messagebox.showinfo("Results", x)
-
-        elif mode.get() == "4":
-            
-            mycursor.execute("SELECT * FROM customers.info WHERE email = \"{}\";".format(search_var.get().strip().lower()))
-            myresult = mycursor.fetchall()
-            for x in myresult:
-                messagebox.showinfo("Results", x)
-
-        else:
-            messagebox.showinfo("Oh no!", "Sorry that was a bad option!")
-        
-        search_pop.destroy()
     
     search_pop = Tk()
     search_pop.title("Search")
@@ -155,65 +147,65 @@ def query():
               "Email" : "4"}
     i = 1
     for (text, value) in values.items():
-        Radiobutton(search_par, text = text, variable = mode,
+        ttk.Radiobutton(search_par, text = text, variable = mode,
             value = value).grid(row=i, column=0, pady = 5)
         i += 1
 
     
-    search_entry = Entry(search_frame, textvariable=search_var)
+    search_entry = ttk.Entry(search_frame, textvariable=search_var)
     search_entry.grid(row=0, column=0, padx=5, pady=5)
 
-    search_btn_query = Button(search_frame, text="Search", command=search_submit)
+    search_btn_query = ttk.Button(search_frame, text="Search")
     search_btn_query.grid(row=0, column=1)
-
-    
-
-    
-
-
-    
-
-
-
+ 
 def home_page():
-
-    model = []
+    model_price_check_csv()
 
     #Home page functions
-    def check_pricing():
-        model.append(model_var.get())
-        model_var.set("")
-        
-    
-    def print_results():
+    def kill(event=None):
+        print(csv_data)
+        window.destroy()
+
+    def step_write(event=None):
+        model_var.set(model_var.get().upper().strip())
+        step_model = model_var.get()
+
+        if step_model != "":
+            all_models.append(model_var.get())
+            model_var.set("")
+
+        else:
+            messagebox.showerror("Invalid Input", "You have not entered any models.")
+            model_var.set("")
+
+    def step_price():
+        if len(all_models) > 0:
+            check_pricing()
+            show_results()
+        else:
+            messagebox.showerror("Invalid Input", "You have not entered any models.")
+
+    def show_saved_models():
+            pass
+
+
+    def show_results():
+
         i = 0
-
-        for item in model:
-            result_label = Label(product_results_model, text=item, padx=5, pady=5)
-            result_label.grid(row=i, column=0)
-
+        for (model, price) in product_values.items():
+            ttk.Label(product_results_model, text="{}:".format(model)).grid(row=i, column=0, pady=5)
+            ttk.Label(product_results_price, text="${}".format(price)).grid(row=i, column=0, pady=5)
             i += 1
+
+            
 
     window = Tk()
     window.title("Home Page")
     window.geometry("500x500")
-    
 
     window.columnconfigure(0, weight=1, minsize=75)
     window.rowconfigure(1, weight=1, minsize=50)
-
-    toolbar_frame = ttk.Frame(window)
-    toolbar_frame.grid(row=0, column=0, padx=0, pady=0)
-
-    bold_btn = ttk.Button(toolbar_frame, text = "Bold")
-    bold_btn.grid(row=0, column=0, sticky="W", padx=0, pady=0)
-
-	# Creating and displaying of italic button
-    italic_btn = ttk.Button(toolbar_frame, text = "Italic")
-    italic_btn.grid(row=0, column=1, sticky="W", padx=0, pady=0)
-
-    
-
+  
     #Frame of all widgets on home page
     main_frame = ttk.Frame(window)
     main_frame.grid(row=1, column=0, columnspan=3, sticky="NSEW")
@@ -224,28 +216,18 @@ def home_page():
     #Creating main Notebook
     home_notebook = ttk.Notebook(main_frame)
     home_notebook.grid(row=1, column=0, sticky="NSEW")
-
-    
-    
-    
+  
     #Creating tabs for Notebooks
     tab_1 = ttk.Frame(home_notebook)
     tab_2 = ttk.Frame(home_notebook)
-    tab_3 = ttk.Frame(home_notebook)
-    tab_4 = ttk.Frame(home_notebook)
-    tab_5 = ttk.Frame(home_notebook)
-    tab_6 = ttk.Frame(home_notebook)
 
-    #Product tab notebook
-    product_notebook = ttk.Notebook(tab_3)
-    product_notebook.grid(row=0, column=0)
+    
 
-    product_tab_1 = ttk.Frame(product_notebook)
-
-    product_notebook.add(product_tab_1, text="Pricing")
+    home_notebook.add(tab_1, text="Products")    
+    home_notebook.add(tab_2, text="Customers")
 
     #Products tab frames
-    product_frame_1 = ttk.Frame(product_tab_1)
+    product_frame_1 = ttk.Frame(tab_1)
     product_frame_1.grid(row=0, column=0, padx=5, pady=5)
 
     #Product tab info
@@ -271,30 +253,27 @@ def home_page():
     product_model_entry = ttk.Entry(product_model_frame, textvariable=model_var)
     product_model_entry.grid(row=0, column=1, padx=5, pady=5)
 
-    model_sub_btn = ttk.Button(product_model_frame, text="Submit", command=check_pricing)
+    product_model_entry.bind("<Return>", step_write)
+    product_model_entry.bind("<F1>", kill)
+
+    model_sub_btn = ttk.Button(product_model_frame, text="Submit", command=step_write)
     model_sub_btn.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
 
-    run_btn = ttk.Button(product_frame_1, text="Run", command=print_results)
-    run_btn.grid(row=2, column=0, padx=5, pady=5)
+    check_btn = ttk.Button(product_model_frame, text="Check Price", command=step_price)
+    check_btn.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
 
     #detail tabs 1 & 2 are added to the main Notebook
-    home_notebook.add(tab_1, text="Customers")
-    home_notebook.add(tab_2, text="Contacts")
-    home_notebook.add(tab_3, text="Products")    
-    home_notebook.add(tab_4, text="(Future Tab)")
-    home_notebook.add(tab_5, text="(Future Tab)")
-    home_notebook.add(tab_6, text="(Future Tab)")
     
 
     #On tab_1
     #New customer button
-    new_cust_but = ttk.Button(tab_1, text="Create New Customer", command=new_customer_pop)
+    new_cust_but = ttk.Button(tab_2, text="Create New Customer", command=new_customer_pop)
     new_cust_but.grid(row=0, column=0, sticky="NSEW", padx=10, pady=10)
 
-    search_btn = ttk.Button(tab_1, text="Search", command=query)
+    search_btn = ttk.Button(tab_2, text="Search")
     search_btn.grid(row=0, column=1)  
 
-    info_frame = ttk.Frame(tab_1)
+    info_frame = ttk.Frame(tab_2)
     info_frame.grid(row=1, column=0, padx=5, pady=5)
 
     #Customer first name label
@@ -313,55 +292,7 @@ def home_page():
     display_email =ttk.Label(info_frame, text="Email: ")
     display_email.grid(row=3, column=0, padx=5, pady=5)
 
-    
-
     window.mainloop()
 
 
-def login():
-
-    def validateLogin(event):
-
-        if username.get() == user_1.username and password.get() == user_1.password:
-            tkWindow.destroy()
-            home_page()
-        else:
-            messagebox.showerror("Incorrect details", "The username or password is incorrect. Please try again.")
-            username.set("")
-            password.set("")
-
-    #window
-    tkWindow = Tk()
-    tkWindow.geometry("250x130")
-    tkWindow.resizable(False, False)
-    tkWindow.title('Login')
-
-    #Login frames
-    login_frame = ttk.Frame(tkWindow)
-    username_frame = ttk.Frame(login_frame)
-    password_frame = ttk.Frame(login_frame)
-    sub_btn_frame = ttk.Frame(login_frame)
-
-    login_frame.grid(row=0, column=0, padx=5, pady=5)
-    username_frame.grid(row=0, column=0, padx=5, pady=5)
-    password_frame.grid(row=1, column=0, padx=5, pady=5)
-    sub_btn_frame.grid(row=2, column=0, padx=5, pady=5)
-
-    #username label and text entry box
-    usernameLabel = ttk.Label(username_frame, text="Username").grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
-    username = StringVar()
-    usernameEntry = ttk.Entry(username_frame, textvariable=username,).grid(row=0, column=1, padx=5, pady=5)  
-
-    #password label and password entry box
-    passwordLabel = ttk.Label(password_frame,text="Password").grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")  
-    password = StringVar()
-    passwordEntry = ttk.Entry(password_frame, textvariable=password, show='*').grid(row=0, column=1, padx=5, pady=5, sticky="NSEW")  
-
-    #login button
-    loginButton = ttk.Button(sub_btn_frame, text="Login", command=validateLogin).grid(row=0, column=0, padx=5, pady=5, sticky="NSEW")
-
-    tkWindow.bind("<Return>", validateLogin)
-
-    tkWindow.mainloop()
-
-login()
+home_page()
